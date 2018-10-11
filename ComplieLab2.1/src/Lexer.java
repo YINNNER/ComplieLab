@@ -157,7 +157,7 @@ public class Lexer {
 
     public static void main(String[] args){
         Lexer lexer = new Lexer();
-        String src = Lexer.class.getResource("test2_1.txt").getPath();
+        String src = Lexer.class.getResource("test2_3.txt").getPath();
 
         lexer.openSrc(src);
 
