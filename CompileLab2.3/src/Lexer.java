@@ -6,7 +6,8 @@ public class Lexer {
     Symbol sym;
     //Number num;
     List<String> strings = new ArrayList<>();
-    List<Character> numToken = new ArrayList<>();
+    List<Character> tmpNumToken = new ArrayList<>(); // 处理过程中暂时存储一个常数
+    List<Number> numberList = new ArrayList<>(); // 常数表
     List<Token> tokenList = new ArrayList<>();
     int index = 0;
     String current = null;
@@ -50,11 +51,46 @@ public class Lexer {
     }
 
 
-    String listToString(){
-        String s = new String();
-        for (Character item : numToken){
-            s += item.toString();
+    /**
+     * 将tmpNumToken转换为String，同时将数字字符串转换位Number放入numberList中
+     * 由于可能出现以多个0开头的数字，必须去掉前面无效的0
+     * 00000视作0
+     * @return num string
+     */
+    String listToString(Symbol sym){
+        String s = "";
+        boolean zeroHead = true;
+        for (int i = 0; i < tmpNumToken.size(); i++){
+            if (i < tmpNumToken.size()-1){
+                if (zeroHead) {
+                    if (tmpNumToken.get(i) != '0') {
+                        zeroHead = false;
+                        s += tmpNumToken.get(i).toString();
+                    }
+
+                }
+                else {
+                    s += tmpNumToken.get(i).toString();
+                }
+            }
+            else {
+                s += tmpNumToken.get(i).toString();
+            }
+
         }
+
+        // 添加常数到常数表中
+        if (sym == Symbol.INTEGER){
+            int num = Integer.valueOf(s);
+            System.out.println(num);
+            numberList.add(num);
+        }
+        else {
+            double num = Double.valueOf(s);
+            System.out.println(num);
+            numberList.add(num);
+        }
+
         return s;
     }
 
@@ -104,25 +140,25 @@ public class Lexer {
                                     isReal = true;
                                 }
                             }
-                            numToken.add(c);
+                            tmpNumToken.add(c);
                             c = getChar(); // 读取下一个字符
                         }
 
                         // 如果最后一个字符是'.'而不是数字，如，20.+，则应该认为是整数，并对'.'报错
-                        if (numToken.get(numToken.size()-1) == '.'){
+                        if (tmpNumToken.get(tmpNumToken.size()-1) == '.'){
                             isReal = false;
-                            numToken.remove(numToken.size()-1);
+                            tmpNumToken.remove(tmpNumToken.size()-1);
                             isError = true;
                             tmp = '.';
                         }
 
                         if (isReal){
-                            tokenList.add(new Token(Symbol.REAL.ordinal(),listToString()));
+                            tokenList.add(new Token(Symbol.REAL.ordinal(),listToString(Symbol.REAL)));
                         }
                         else {
-                            tokenList.add(new Token(Symbol.INTEGER.ordinal(),listToString()));
+                            tokenList.add(new Token(Symbol.INTEGER.ordinal(),listToString(Symbol.INTEGER)));
                         }
-                        numToken.clear(); // 清空存储的数字
+                        tmpNumToken.clear(); // 清空存储的数字
 
                         // 延迟加入错误单词，避免打印顺序出错
                         if (isError) tokenList.add(new Token(Symbol.ERROR.ordinal(),tmp+""));
@@ -157,7 +193,7 @@ public class Lexer {
 
     public static void main(String[] args){
         Lexer lexer = new Lexer();
-        String src = Lexer.class.getResource("test2_1.txt").getPath();
+        String src = Lexer.class.getResource("test2_3.txt").getPath();
 
         lexer.openSrc(src);
 
