@@ -1,20 +1,19 @@
 /** 
 
- ²âÊÔÓÃÀýËµÃ÷£º
-±¾²âÊÔÓÃÀýÓ¦¸ÃÒªÕýÈ·Ö´ÐÐµÄÖ÷Òª·ÖÎªÒÔÏÂ9¸öÄ£¿é£º
-	test1¡ª¡ª±äÁ¿ÉùÃ÷
-	test2¡ª¡ªÒ»°ã±äÁ¿¸³Öµ
-	test3¡ª¡ªÊý×é
-	test4¡ª¡ªËãÊõÔËËã
-	test5¡ª¡ªIF-ELSE
-	test6¡ª¡ªWHILE
-	test7¡ª¡ªIF-ELSEÓëWHILE
-	test8¡ª¡ª½×³Ë
-	test9¡ª¡ªÊý×éÅÅÐò
-        test9¡ª¡ªBREAK
-        test9¡ª¡ªSWITCH
-     ±¨´íµÄÓÃÀýÔòÓÐÏÂÃæ3¸öÄ£¿é
-	error1¡ª¡ªID		²âÊÔ±êÖ¾·ûÃüÃû
-	error2¡ª¡ªarray		²âÊÔÊý×éÔ½½çºÍÏÂ±ê·Ç·¨
-	error3¡ª¡ªcomment	²âÊÔ×¢ÊÍÇ¶Ì×ºÍ¶àÐÐ×¢ÊÍÎÞ½áÎ²
+ æµ‹è¯•ç”¨ä¾‹è¯´æ˜Žï¼š
+æœ¬æµ‹è¯•ç”¨ä¾‹åº”è¯¥è¦æ­£ç¡®æ‰§è¡Œçš„ä¸»è¦åˆ†ä¸ºä»¥ä¸‹9ä¸ªæ¨¡å—ï¼š
+	test1â€”â€”å˜é‡å£°æ˜Ž
+	test2â€”â€”ä¸€èˆ¬å˜é‡èµ‹å€¼
+	test3â€”â€”æ•°ç»„
+	test4â€”â€”ç®—æœ¯è¿ç®—
+	test5â€”â€”IF-ELSE
+	test6â€”â€”WHILE
+	test7â€”â€”IF-ELSEä¸ŽWHILE
+	test8â€”â€”é˜¶ä¹˜
+	test9â€”â€”æ•°ç»„æŽ’åº
+        
+     æŠ¥é”™çš„ç”¨ä¾‹åˆ™æœ‰ä¸‹é¢3ä¸ªæ¨¡å—
+	error1â€”â€”ID		æµ‹è¯•æ ‡å¿—ç¬¦å‘½å
+	error2â€”â€”array		æµ‹è¯•æ•°ç»„è¶Šç•Œå’Œä¸‹æ ‡éžæ³•
+	error3â€”â€”comment	æµ‹è¯•æ³¨é‡ŠåµŒå¥—å’Œå¤šè¡Œæ³¨é‡Šæ— ç»“å°¾
 
