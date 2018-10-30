@@ -1,0 +1,333 @@
+/**
+* This is a JJTree file for the CMM grammer.
+*
+* Author: AlexRui
+* Date: 2018.10.30
+*/
+options{
+  JDK_VERSION = "1.8";
+}
+PARSER_BEGIN(compiler)
+package Interpreter;
+public class compiler{
+  public static void main(String args[]){
+    System.out.println("Please type the valid statement...");
+    System.out.println(" Using a ! to terminate your input>>");
+    new compiler(System.in);
+    try {
+      SimpleNode n = compiler.Start();
+      n.dump("");
+      System.out.println("Thank you.");
+    }
+    catch (Exception e){
+      System.out.println("Oops.");
+      System.out.println(e.getMessage());
+    }
+  }
+    public static void main(String args[]){
+      System.out.println("Please type the valid statement...");
+      System.out.println(" Using a ! to terminate your input>>");
+      new compiler(System.in);
+      try {
+        SimpleNode n = compiler.Start();
+        n.dump("");
+        System.out.println("Thank you.");
+      }
+      catch (Exception e){
+        System.out.println("Oops.");
+        System.out.println(e.getMessage());
+      }
+    }
+
+    public static final String[] Images = {
+            "", null, null, null, null, null, null, "IF", "ELSE",
+            "READ", "WRITE", "WHILE", "INT",
+            "REAL", "BOOL", "INTEGER_LITERAL", "REAL_LITERAL", null, "BOOL_LITERAL", "UNDERSCORE", "COMMA", "SEMI", "COLON",
+            "LEFT_PAR", "RIGHT_PAR", "LEFT_BRA", "RIGHT_BRA", "LEFT_CUR", "RIGHT_CUR", "ASSIGN", "PLUS", "MINUS", "TIMES", "DIVIDE",
+            "MOD", "LESS:", "GREATER", "EQUAL", "NOTEQUAL", "LESS_EQUAL", "GREATER_EQUAL", "IDENTIFIER", null, null, };
+
+    public final String Lexical() throws FileNotFoundException {
+      compilerTokenManager TokenManager = token_source;
+      String result = "";
+      String errMsg = "";
+      String lexical = "";
+      String sentence = "";
+      int line = 0;
+
+      while(true) {
+        Token t;
+        while(true) {
+          try {
+            t = compilerTokenManager.getNextToken();
+            break;
+          } catch (TokenMgrError e1) {
+            errMsg = errMsg + e1.toString() + "\r\n";
+
+            try {
+              SimpleCharStream.readChar();
+            } catch (IOException e) {
+              errMsg = errMsg + e.getMessage() + "\r\n";
+            }
+          }
+        }
+
+        if (line != 0 && line != t.beginLine) {
+          sentence = sentence + "\r\n";
+          result = result + sentence + lexical;
+          line = t.beginLine;
+          sentence = "Line:" + line;
+          lexical = "";
+        } else if (line == 0) {
+          line = t.beginLine;
+          sentence = "Line:" + line;
+        }
+
+        if (t.specialToken != null) {
+          Token tmp_t;
+          for(tmp_t = t.specialToken; tmp_t.specialToken != null; tmp_t = tmp_t.specialToken) {
+            ;
+          }
+
+          while(tmp_t != null) {
+            result = result + tmp_t.image + "\r\n";
+            tmp_t = tmp_t.next;
+          }
+        }
+
+        sentence = sentence + " " + t.image;
+        if (t.kind == 0) {
+          sentence = sentence + "\r\n";
+          result = result + sentence + lexical;
+          return result;
+        }
+
+
+        if(Images[t.kind]==null){
+          lexical+="\t(Line:"+t.beginLine+":"+"\t"+t.image+")"+"  ";
+        }
+        else {
+          lexical+="\t(Line:"+t.beginLine+":"+"\t"+Images[t.kind]+"\t"+t.image+")"+"  ";
+        }
+        lexical+="\r\n";
+      }
+    }
+
+    public final String Lexicaler() throws FileNotFoundException {
+      compilerTokenManager TokenManager = token_source;
+      String result = "";
+      String errMsg = "";
+      String lexical = "";
+      String sentence = "";
+      int Line = 0;
+
+      while(true) {
+        Token t;
+        while(true) {
+          try {
+            t = compilerTokenManager.getNextToken();
+            break;
+          } catch (TokenMgrError var11) {
+            errMsg = errMsg + var11.toString() + "\r\n";
+
+            try {
+              SimpleCharStream var10000 = compilerTokenManager.input_stream;
+              SimpleCharStream.readChar();
+            } catch (IOException var10) {
+              errMsg = errMsg + var10.getMessage() + "\r\n";
+            }
+          }
+        }
+
+        if ((Line == 0 || Line == t.beginLine) && t.kind != 0) {
+          if (Line == 0) {
+            Line = t.beginLine;
+            sentence = "Line:" + Line;
+          }
+        } else {
+          sentence = sentence + "\r\n";
+          result = result + sentence + lexical;
+          Line = t.beginLine;
+          sentence = "Line:" + Line;
+          lexical = "";
+        }
+
+        if (t.specialToken != null) {
+          Token tmp_t;
+          for(tmp_t = t.specialToken; tmp_t.specialToken != null; tmp_t = tmp_t.specialToken) {
+            ;
+          }
+
+          while(tmp_t != null) {
+            result = result + tmp_t.image + "\r\n";
+            tmp_t = tmp_t.next;
+          }
+        }
+
+        sentence = sentence + " " + t.image;
+        if (t.kind == 0) {
+          sentence = sentence + "\r\n";
+          result = result + sentence + lexical;
+          return errMsg;
+        }
+
+        if (Images[t.kind] == null) {
+          lexical = lexical + "\t(Line:" + t.beginLine + ":" + "\t" + t.image + ")" + "  ";
+        } else {
+          lexical = lexical + "\t(Line:" + t.beginLine + ":" + "\t" + Images[t.kind] + "\t" + t.image + ")" + "  ";
+        }
+
+        lexical = lexical + "\r\n";
+      }
+    }
+}
+
+PARSER_END(compiler)
+
+SKIP:{ /*lank character*/
+  " "
+  | "\t"
+  | "\n"
+  | "\r"
+  | <"//"(~["\n", "\r"])*("\n"
+  | "\r"
+  | "\r\n")>
+  | <"/*"(~["*"])*"*"(~["/"](~["*"])*"*")*"/">
+}
+
+TOKEN:/*key words*/
+{
+  <IF:"if">
+  | <ELSE:"else">
+  | <READ:"read">
+  | <WRITE:"write">
+  | <WHILE:"while">
+  | <INT:"int">
+  | <REAL:"real">
+  | <BOOL:"bool">
+}
+TOKEN:/* int */
+{
+  <INTEGER_LITERAL:["1"-"9"](<DIGIT>)*>
+}
+TOKEN:/* real */
+{
+  <REAL_LITERAL:(<DIGIT>)+
+  | (<DIGIT>)+"."
+  | (<DIGIT>)+"."(<DIGIT>)+
+  | "."(<DIGIT>)+>
+}
+TOKEN:/* digit */
+{
+  <#DIGIT:["0"-"9"]>
+}
+TOKEN:/* bool */
+{
+    <BOOL_LITERAL:"true"|"false">
+}
+TOKEN:
+{
+  <UNDERSCORE:"_">
+  | <COMMA:",">
+  | <SEMI:";">
+  | <COLON:":">
+  | <LEFT_PAR:"(">
+  | <RIGHT_PAR:")">
+  | <LEFT_BRA: "[">
+  | <RIGHT_BRA: "]">
+  | <LEFT_CUR: "{">
+  | <RIGHT_CUR: "}">
+  | <ASSIGN:"=">
+  | <PLUS:"+">
+  | <MINUS:"-">
+  | <TIMES:"*">
+  | <DIVIDE:"/">
+  | <MOD: "%">
+  | <LESS: "<">
+  | <GREATER: ">">
+  | <EQUAL: "==">
+  | <NOTEQUAL: "<>">
+  | <LESS_EQUAL: "<=">
+  | <GREATER_EQUAL: ">=">
+
+}
+TOKEN:/* 定义标识符 */
+{
+  <IDENTIFIER:<LETTER>
+  | <LETTER>(<LETTER>
+  | <DIGIT>
+  | <UNDERSCORE>)*(<LETTER>
+  | <DIGIT>)+>
+  | <#LETTER:["a"-"z", "A"-"Z"]>
+}
+SimpleNode Start():{}{
+  Procedure()"!"{
+    return jjtThis;
+  }
+}
+/*处理主程序*/
+void Procedure():{}{
+  (Statement()
+  | Block())+
+}
+/*处理语句*/
+void Statement():{}{
+  VarialbeDeclaration()
+  | Identifier()<ASSIGN>Expression()<SEMI>
+  |LOOKAHEAD(3)(<IF><LEFT_PAR>Condition()<RIGHT_PAR>Statement()[<ELSE>Statement()])+
+  | <READ><LEFT_PAR>Identifier()(<COMMA>Identifier())*<RIGHT_PAR><SEMI>
+  | <WRITE><LEFT_PAR>Expression()(<COMMA>Identifier())*<RIGHT_PAR><SEMI>
+  | <WHILE><LEFT_PAR>Condition()<RIGHT_PAR>Statement()
+}
+/*处理变量声明*/
+void VarialbeDeclaration():{}{
+  ((<INT>
+  | <REAL>
+  | <BOOL>)[<LEFT_BRA>Expression()<RIGHT_BRA>])Identifier()(<COMMA>Identifier())*<SEMI>
+}
+void Block():{}{
+    <LEFT_CUR>(Statement()
+                | Block())<RIGHT_CUR>
+}
+/*处理表达式*/
+void Expression():{}{
+  Term()((<PLUS>
+  | <MINUS>)Term())*
+}
+/*处理项*/
+void Term():{}{
+  Factor()((<TIMES>
+  | <DIVIDE>)Factor())*
+}
+/*处理因子*/
+void Factor():{}{
+  Identifier()
+  | <LEFT_PAR>Expression()<RIGHT_PAR>
+  | Integer()
+  | Real()
+  | Bool()
+}
+/*处理条件*/
+void Condition():{}{
+    Expression()(<EQUAL>
+    | <NOTEQUAL>
+    | <LESS>
+    | <GREATER>
+    | <LESS_EQUAL>
+    | <GREATER_EQUAL>)Expression()
+}
+/*处理标识符*/
+void Identifier():{}{
+  <IDENTIFIER>[<LEFT_BRA>Expression()<RIGHT_BRA>]
+}
+/*处理整数*/
+void Integer():{}{
+  <INTEGER_LITERAL>
+}
+/*处理实数*/
+void Real():{}{
+   <REAL_LITERAL>
+ }
+ void Bool():{}{
+     <BOOL_LITERAL>
+ }
+
