@@ -1,7 +1,7 @@
 # Parser
 
-##ParserTree
-![parsertree](/Users/renyuan/Desktop/Calculator/CalculatorParserTree.png)
+## ParserTree
+![](https://github.com/YINNNER/ComplieLab/blob/master/Calculator/CalculatorParserTree.png)
 
 ## Rules
 * EXP —> TERM + EXP | TERM - EXP | TERM
