@@ -15,6 +15,8 @@ public class Parser {
 
     public static List<Token> tokenList = new ArrayList<>();
 
+    boolean isOpr = false;
+
     private Node parse(List<Token> tList) {
         Node node = new Node();
         tokenList = tList;
@@ -82,25 +84,44 @@ public class Parser {
     private Node exp() {
         Node lnode = new Node();
         Node rnode;
-        Node node = term();
+        Node node;
+
+        if (((currToken.getSymIndex() == 2) || (currToken.getSymIndex() == 3)) && j < tokenList.size() - 1){
+            Token token = new Token(0,"0");
+            node = new Node(token,2);
+        }
+        else{
+            node = term();
+        }
 
         while (((currToken.getSymIndex() == 2) || (currToken.getSymIndex() == 3)) && j < tokenList.size() - 1) {
 
-            lnode.childNode1 = node.childNode1;
-            lnode.childNode2 = node.childNode2;
-            lnode.ntIndex = node.ntIndex;
-            lnode.token = node.token;
+            if(isOpr){
+               // isErr = true;
+                POutput += "Syntac error: 符号重叠"+"\n";
+                node = new Node(null,NodeType.ERROR.ordinal());
+                break;
+            }
+            else{
 
-            node.setChildNode1(lnode);
+                lnode.childNode1 = node.childNode1;
+                lnode.childNode2 = node.childNode2;
+                lnode.ntIndex = node.ntIndex;
+                lnode.token = node.token;
 
-            lnode = new Node();
+                node.setChildNode1(lnode);
 
-            node.setNtIndex(NodeType.EXP.ordinal());
-            node.setToken(currToken);
-            currToken = tokenList.get(++j);
+                lnode = new Node();
 
-            rnode = term();
-            node.setChildNode2(rnode);
+                node.setNtIndex(NodeType.EXP.ordinal());
+                node.setToken(currToken);
+                currToken = tokenList.get(++j);
+
+                rnode = term();
+                node.setChildNode2(rnode);
+            }
+
+            isOpr = true;
         }
         return node;
     }
@@ -144,13 +165,24 @@ public class Parser {
         POutput = POutput + "----语法分析----\n";
 
         for (List<Token> tlist: lexerList) {
-            POutput =  POutput +  "第" + (++i) + "行算数式分析结果：" +  "\n";
-            node = parser.parse(tlist);
-            nodeList.add(node);
-            parser.printTree(node);
-            tlist.clear();
-            POutput = POutput + "";
-            j = -1;
+            if (tlist.size() == 0){
+                POutput =  POutput + "算数式为空" +  "\n";
+                node = null;
+                nodeList.add(node);
+            }
+            else {
+                node = parser.parse(tlist);
+                if(node.getNtIndex() == 3){
+                    POutput =  POutput + "Syntax error" +  "\n";
+                }
+                else{
+                    nodeList.add(node);
+                    parser.printTree(node);
+                    tlist.clear();
+                    POutput = POutput + "";
+                    j = -1;
+                }
+            }
 
         }
         lexerList.clear();

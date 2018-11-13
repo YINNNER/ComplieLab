@@ -15,7 +15,7 @@ public class Lexer {
     int index = 0;
     String current = null;
     public static String LOutput = "";
-    
+
     private void inputFile(BufferedReader br){
         String tempString = null;
         try {
