@@ -4,13 +4,14 @@ import Compiler.PAR.Parser;
 import Compiler.PAR.Node;
 
 import java.io.BufferedReader;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Answer {
 
 
     public static String AOutput = "";
-
+    static List<Node> nodeList = new ArrayList<>();
 
 
     private static double calc(Node node) {
@@ -61,7 +62,8 @@ public class Answer {
     }
 
     public static void AStart(BufferedReader br){
-        List<Node> nodeList = Parser.PStart(br);
+        nodeList = null;
+        nodeList = Parser.PStart(br);
 
         int i = 0;
         AOutput = "";

@@ -15,6 +15,7 @@ public class Lexer {
     int index = 0;
     String current = null;
     public static String LOutput = "";
+    Boolean isErr = false;
 
     private void inputFile(BufferedReader br){
         String tempString = null;
@@ -131,6 +132,7 @@ public class Lexer {
                                 if (isReal){ // 出现第二个'.'时报错，并结束分析
                                     //isError = true;
                                     //tmp = c;
+                                    isErr = true;
                                     break;
                                 }
                                 else {
@@ -165,6 +167,7 @@ public class Lexer {
                         if (index <= current.length()) index--;
                     }
                     else {
+                        isErr = true;
                         sym = Symbol.ERROR;
                         tokenList.add(new Token(Symbol.ERROR.ordinal(),c+""));
                     }
@@ -176,7 +179,6 @@ public class Lexer {
     }
 
     private void printTokenInfo(){
-        lexerList.add(tokenList);
         for(Token token : tokenList){
             if (token.symIndex == Symbol.ERROR.ordinal()){
                 LOutput = LOutput +"含有不合法字符：\'" + token.token + "\'" + "\n";
@@ -186,6 +188,13 @@ public class Lexer {
             }
 
         }
+        if (isErr){
+            tokenList = new ArrayList<>();
+            tokenList.add(new Token(Symbol.ERROR.ordinal(),null));
+            return;
+        }
+
+        lexerList.add(tokenList);
     }
 
 
@@ -203,7 +212,6 @@ public class Lexer {
             lexer.printTokenInfo();
             lexer.tokenList = new ArrayList<>();  // 清空tokenList中的Token
             LOutput = LOutput +"";
-
         }
         return lexerList;
     }

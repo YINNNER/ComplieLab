@@ -1,6 +1,10 @@
 package Compiler.PAR;
 import Compiler.LEX.Lexer;
+import Compiler.LEX.Symbol;
 import Compiler.LEX.Token;
+import com.sun.xml.internal.ws.api.message.ExceptionHasMessage;
+
+import javax.swing.*;
 import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +20,8 @@ public class Parser {
     public static List<Token> tokenList = new ArrayList<>();
 
     boolean isOpr = false;
+    static int right_braket = 0;
+    static int left_braket = 0;
 
     private Node parse(List<Token> tList) {
         Node node = new Node();
@@ -33,28 +39,46 @@ public class Parser {
 
     private Node factor() {
         Node node = new Node();
+
         if (j < tokenList.size() - 1 && (currToken.getSymIndex() == 0 || currToken.getSymIndex() == 1)) {
-            node.setNtIndex(NodeType.FACTOR.ordinal());
-            node.setToken(currToken);
-            currToken = tokenList.get(++j);
+            try{
+                node.setNtIndex(NodeType.FACTOR.ordinal());
+                node.setToken(currToken);
+                currToken = tokenList.get(++j);
+                isOpr = false;
+                if(tokenList.get(j).getSymIndex() == 6){
+                    POutput += "Syntax Error : position ("+ (j+1) +")  the left braket is at the wrong position.\n";
+                    if(j < tokenList.size() - 1){
+                        currToken = tokenList.get(++j);
+                    }
+                }
+            }catch(Exception e){
+                e.printStackTrace();
+            }
         } else if (j == tokenList.size() - 1 && (currToken.getSymIndex() == 0|| currToken.getSymIndex() == 1)) {
             node.setNtIndex(NodeType.FACTOR.ordinal());
             node.setToken(currToken);
+            isOpr = false;
         } else if (j < tokenList.size() - 1 && currToken.getSymIndex() == 6) {
             currToken = tokenList.get(++j);
+            left_braket++;
+            isOpr = false;
             node = exp();
-            if (j < tokenList.size() - 1 && currToken.getSymIndex() == 7) {
+            if (j == tokenList.size() - 1 && currToken.getSymIndex() != 7) {
+                POutput = POutput + "括号不匹配\n";
+                node = new Node(null, NodeType.ERROR.ordinal());
+                return node;
+            } else if(j < tokenList.size() - 1 && currToken.getSymIndex() == 7) {
                 currToken = tokenList.get(++j);
+                right_braket++;
             } else if (j == tokenList.size() - 1 && currToken.getSymIndex() == 7) {
-            } else {
-                POutput = POutput + "Error : the delimeter is not matched.\n";
-                currToken = tokenList.get(++j);
+                right_braket++;
             }
-        }else{
-            node = new Node(null, NodeType.ERROR.ordinal());
-            return node;
         }
-        POutput += "node1:" + node.getNtIndex() + "\n";
+
+        if ((right_braket != left_braket) && j == tokenList.size() - 1){
+            POutput += "Syntax Error : 括号不匹配\n";
+        }
 
         return node;
     }
@@ -69,7 +93,8 @@ public class Parser {
             return node;
         }
 
-        if (((currToken.getSymIndex() == 4) || (currToken.getSymIndex() == 5)) && j < tokenList.size() - 1){
+        if (((currToken.getSymIndex() == 4) || (currToken.getSymIndex() == 5)) && j == 0){
+            POutput += "Syntax error: 运算符前无被运算数"+"\n";
             node = new Node(null, NodeType.ERROR.ordinal());
             return node;
         }else{
@@ -83,6 +108,13 @@ public class Parser {
                 node = new Node(null, NodeType.ERROR.ordinal());
                 return node;
             }
+
+            if(j == tokenList.size() - 1){
+                POutput += "Syntax error: 运算符后无运算数"+"\n";
+                node = new Node(null, NodeType.ERROR.ordinal());
+                break;
+            }
+
             else {
                 lnode.childNode1 = node.childNode1;
                 lnode.childNode2 = node.childNode2;
@@ -97,12 +129,24 @@ public class Parser {
                 node.setToken(currToken);
                 currToken = tokenList.get(++j);
 
+                if (node.getToken().getSymIndex() == 5 &&
+                        (currToken.getSymIndex() == 0 || currToken.getSymIndex() == 1 ) &&
+                        ((Double.valueOf(currToken.getToken())+2.0) == 2.0)){
+                    POutput += "Syntax error: \"0\"不可作为除数"+"\n";
+                    node = new Node(null, NodeType.ERROR.ordinal());
+                    return node;
+                }
+
+                isOpr = true;
                 rnode = term();
+
+                if(rnode !=null && rnode.getNtIndex() == 3){
+                    rnode = new Node(null, NodeType.ERROR.ordinal());
+                    return rnode;
+                }
                 node.setChildNode2(rnode);
             }
-            isOpr = true;
         }
-        POutput += "node2:" + node.getNtIndex() + "\n";
         return node;
     }
 
@@ -111,15 +155,17 @@ public class Parser {
         Node rnode;
         Node node = new Node();
 
+
         if(node !=null && node.getNtIndex() == 3){
             node = new Node(null, NodeType.ERROR.ordinal());
             return node;
         }
 
-        if (((currToken.getSymIndex() == 2) || (currToken.getSymIndex() == 3)) && j < tokenList.size() - 1){
+        if (((currToken.getSymIndex() == 2) || (currToken.getSymIndex() == 3))
+                && (j == 0 || node.getToken().getSymIndex() == 6)){
             Token token = new Token(0,"0");
             node = new Node(token,2);
-            //isOpr = true;
+            isOpr = true;
         }
         else{
             node = term();
@@ -137,13 +183,14 @@ public class Parser {
                 node = new Node(null, NodeType.ERROR.ordinal());
                 return node;
             }
+
             if(isOpr){
-                POutput += "Syntax error1: 符号重叠"+"\n";
+                POutput += "Syntax error: 符号重叠"+"\n";
                 node = new Node(null,NodeType.ERROR.ordinal());
                 return node;
             }
             else{
-
+                isOpr = true;
                 lnode.childNode1 = node.childNode1;
                 lnode.childNode2 = node.childNode2;
                 lnode.ntIndex = node.ntIndex;
@@ -157,13 +204,25 @@ public class Parser {
                 node.setToken(currToken);
                 currToken = tokenList.get(++j);
 
+                try{
+                    if(tokenList.get(j).getSymIndex() == 7){
+                        POutput += "there is no right braket in the expression.\n";
+                        throw new RuntimeException("there is no right braket in the expression.\n");
+                    }
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+
                 rnode = term();
+
+                if(rnode !=null && rnode.getNtIndex() == 3){
+                    rnode = new Node(null, NodeType.ERROR.ordinal());
+                    return rnode;
+                }
                 node.setChildNode2(rnode);
             }
 
-            isOpr = true;
         }
-        POutput += "node3:" + node.getNtIndex() + "\n";
         return node;
     }
 
@@ -205,9 +264,18 @@ public class Parser {
         int i = 0;
         POutput = POutput + "----语法分析----\n";
 
+        if (lexerList.size() == 0){
+            POutput += "Lexical Error, the lexerlist is empty!\n";
+        }
         for (List<Token> tlist: lexerList) {
-            if (tlist.size() == 0){
-                POutput =  POutput + "算数式为空" +  "\n";
+            POutput =  POutput +  "第" + (++i) + "行算数式分析结果：" +  "\n";
+            if (tlist.get(0).getSymIndex() == Symbol.ERROR.ordinal()){
+                POutput =  POutput + "Lexical Error!" +  "\n";
+                node = null;
+                nodeList.add(node);
+            }
+            else if (tlist.size() == 0){
+                POutput =  POutput + "Lexical Error!" +  "\n";
                 node = null;
                 nodeList.add(node);
             }
@@ -215,18 +283,17 @@ public class Parser {
                 node = parser.parse(tlist);
                 if(node.getNtIndex() == 3){
                     nodeList.add(node);
-                    POutput =  POutput + "Syntax error" +  "\n";
                 }
                 else{
                     nodeList.add(node);
                     parser.printTree(node);
-                    tlist.clear();
-                    POutput = POutput + "";
-                    j = -1;
                 }
             }
-
+            tlist.clear();
+            POutput = POutput + "";
+            j = -1;
         }
+
         lexerList.clear();
         return nodeList;
     }
