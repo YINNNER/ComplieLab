@@ -35,6 +35,8 @@ public class Node {
         return this.token;
     }
 
+    public int getNtIndex(){return this.ntIndex;}
+
     public Node getChildNode1(){
         return this.childNode1;
     }

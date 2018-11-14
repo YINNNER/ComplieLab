@@ -69,15 +69,23 @@ public class Answer {
 
         for (Node node: nodeList) {
             AOutput =  AOutput +  "第" + (++i) + "行算数式分析结果：" +  "\n";
-
-            double ans = calc(node);
-            int a = (new Double(ans)).intValue();
-            if(a == ans){
-                AOutput += a + "\n";
+            if (node == null){
+                AOutput =  AOutput + "算数式为空" +  "\n";
+            }
+            else if (node.getNtIndex() == 3){
+                AOutput = AOutput + "Syntax error" +  "\n";
             }
             else {
-                AOutput += ans + "\n";
+                double ans = calc(node);
+                int a = (new Double(ans)).intValue();
+                if(a == ans){
+                    AOutput += a + "\n";
+                }
+                else {
+                    AOutput += ans + "\n";
+                }
             }
+
         }
     }
 
