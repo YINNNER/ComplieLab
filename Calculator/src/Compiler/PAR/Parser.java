@@ -33,7 +33,6 @@ public class Parser {
 
     private Node factor() {
         Node node = new Node();
-
         if (j < tokenList.size() - 1 && (currToken.getSymIndex() == 0 || currToken.getSymIndex() == 1)) {
             node.setNtIndex(NodeType.FACTOR.ordinal());
             node.setToken(currToken);
@@ -51,7 +50,11 @@ public class Parser {
                 POutput = POutput + "Error : the delimeter is not matched.\n";
                 currToken = tokenList.get(++j);
             }
+        }else{
+            node = new Node(null, NodeType.ERROR.ordinal());
+            return node;
         }
+        POutput += "node1:" + node.getNtIndex() + "\n";
 
         return node;
     }
@@ -59,48 +62,85 @@ public class Parser {
     private Node term() {
         Node lnode = new Node();
         Node rnode;
-        Node node = factor();
+        Node node = new Node();
 
-        while (((currToken.getSymIndex() == 4) || (currToken.getSymIndex() == 5)) && j < tokenList.size() - 1) {
-            lnode.childNode1 = node.childNode1;
-            lnode.childNode2 = node.childNode2;
-            lnode.ntIndex = node.ntIndex;
-            lnode.token = node.token;
-
-            node.setChildNode1(lnode);
-
-            lnode = new Node();
-
-            node.setNtIndex(NodeType.TERM.ordinal());
-            node.setToken(currToken);
-            currToken = tokenList.get(++j);
-
-            rnode = term();
-            node.setChildNode2(rnode);
+        if(node !=null && node.getNtIndex() == 3){
+            node = new Node(null, NodeType.ERROR.ordinal());
+            return node;
         }
+
+        if (((currToken.getSymIndex() == 4) || (currToken.getSymIndex() == 5)) && j < tokenList.size() - 1){
+            node = new Node(null, NodeType.ERROR.ordinal());
+            return node;
+        }else{
+            node = factor();
+        }
+
+        while (((currToken.getSymIndex() == 4) || (currToken.getSymIndex() == 5)) && j <= tokenList.size() - 1) {
+
+            if(isOpr){
+                POutput += "Syntax error2: 符号重叠"+"\n";
+                node = new Node(null, NodeType.ERROR.ordinal());
+                return node;
+            }
+            else {
+                lnode.childNode1 = node.childNode1;
+                lnode.childNode2 = node.childNode2;
+                lnode.ntIndex = node.ntIndex;
+                lnode.token = node.token;
+
+                node.setChildNode1(lnode);
+
+                lnode = new Node();
+
+                node.setNtIndex(NodeType.TERM.ordinal());
+                node.setToken(currToken);
+                currToken = tokenList.get(++j);
+
+                rnode = term();
+                node.setChildNode2(rnode);
+            }
+            isOpr = true;
+        }
+        POutput += "node2:" + node.getNtIndex() + "\n";
         return node;
     }
 
     private Node exp() {
         Node lnode = new Node();
         Node rnode;
-        Node node;
+        Node node = new Node();
+
+        if(node !=null && node.getNtIndex() == 3){
+            node = new Node(null, NodeType.ERROR.ordinal());
+            return node;
+        }
 
         if (((currToken.getSymIndex() == 2) || (currToken.getSymIndex() == 3)) && j < tokenList.size() - 1){
             Token token = new Token(0,"0");
             node = new Node(token,2);
+            //isOpr = true;
         }
         else{
             node = term();
         }
 
-        while (((currToken.getSymIndex() == 2) || (currToken.getSymIndex() == 3)) && j < tokenList.size() - 1) {
+        if (((currToken.getSymIndex() == 2) || (currToken.getSymIndex() == 3)) && j == tokenList.size() - 1){
+            node = new Node(null, NodeType.ERROR.ordinal());
+            return node;
+        }
 
+
+        while (((currToken.getSymIndex() == 2) || (currToken.getSymIndex() == 3)) && j <= tokenList.size() - 1) {
+            if(j == tokenList.size() - 1){
+                POutput += "Syntax error: 运算符后无运算数"+"\n";
+                node = new Node(null, NodeType.ERROR.ordinal());
+                return node;
+            }
             if(isOpr){
-               // isErr = true;
-                POutput += "Syntac error: 符号重叠"+"\n";
+                POutput += "Syntax error1: 符号重叠"+"\n";
                 node = new Node(null,NodeType.ERROR.ordinal());
-                break;
+                return node;
             }
             else{
 
@@ -123,6 +163,7 @@ public class Parser {
 
             isOpr = true;
         }
+        POutput += "node3:" + node.getNtIndex() + "\n";
         return node;
     }
 
@@ -173,6 +214,7 @@ public class Parser {
             else {
                 node = parser.parse(tlist);
                 if(node.getNtIndex() == 3){
+                    nodeList.add(node);
                     POutput =  POutput + "Syntax error" +  "\n";
                 }
                 else{

@@ -73,7 +73,7 @@ public class Answer {
                 AOutput =  AOutput + "算数式为空" +  "\n";
             }
             else if (node.getNtIndex() == 3){
-                AOutput = AOutput + "Lexical error" +  "\n";
+                AOutput = AOutput + "Syntax error" +  "\n";
             }
             else {
                 double ans = calc(node);
