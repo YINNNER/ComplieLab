@@ -46,8 +46,8 @@ public class Parser {
                 node.setToken(currToken);
                 currToken = tokenList.get(++j);
                 isOpr = false;
-                if(tokenList.get(j).getSymIndex() == 6){
-                    POutput += "Syntax Error : position ("+ (j+1) +")  the left braket is at the wrong position.\n";
+                if( ((left_braket - right_braket)==0) && currToken.getSymIndex() == 7){
+                    POutput += "Syntax Error : position ("+ (j+1) +")  右括号冗余 \n";
                     if(j < tokenList.size() - 1){
                         currToken = tokenList.get(++j);
                     }
@@ -65,20 +65,23 @@ public class Parser {
             isOpr = false;
             node = exp();
             if (j == tokenList.size() - 1 && currToken.getSymIndex() != 7) {
-                POutput = POutput + "括号不匹配\n";
-                node = new Node(null, NodeType.ERROR.ordinal());
-                return node;
+
             } else if(j < tokenList.size() - 1 && currToken.getSymIndex() == 7) {
                 currToken = tokenList.get(++j);
                 right_braket++;
             } else if (j == tokenList.size() - 1 && currToken.getSymIndex() == 7) {
                 right_braket++;
             }
+        } else if(j == tokenList.size() - 1 && currToken.getSymIndex() == 7){
+            right_braket++;
         }
 
-        if ((right_braket != left_braket) && j == tokenList.size() - 1){
-            POutput += "Syntax Error : 括号不匹配\n";
-        }
+       /* if ((right_braket == left_braket) && j < tokenList.size() - 1 &&currToken.getSymIndex() == 7){
+            currToken = tokenList.get(++j);
+            POutput += "Something wrong.\n";
+        }else if ((right_braket == left_braket) &&j == tokenList.size() - 1 && currToken.getSymIndex() == 7){
+            POutput += "Something wrong.\n";
+        }*/
 
         return node;
     }
@@ -137,8 +140,14 @@ public class Parser {
                     return node;
                 }
 
+                if(currToken.getSymIndex() == 7){
+                    POutput += "括号不匹配.\n";
+                    currToken = tokenList.get(++j);
+                }
+
                 isOpr = true;
                 rnode = term();
+
 
                 if(rnode !=null && rnode.getNtIndex() == 3){
                     rnode = new Node(null, NodeType.ERROR.ordinal());
@@ -204,16 +213,13 @@ public class Parser {
                 node.setToken(currToken);
                 currToken = tokenList.get(++j);
 
-                try{
-                    if(tokenList.get(j).getSymIndex() == 7){
-                        POutput += "there is no right braket in the expression.\n";
-                        throw new RuntimeException("there is no right braket in the expression.\n");
-                    }
-                }catch(Exception e){
-                    e.printStackTrace();
+                if(tokenList.get(j).getSymIndex() == 7){
+                    POutput += "括号不匹配1.\n";
+                    currToken = tokenList.get(++j);
                 }
 
                 rnode = term();
+
 
                 if(rnode !=null && rnode.getNtIndex() == 3){
                     rnode = new Node(null, NodeType.ERROR.ordinal());
@@ -227,7 +233,7 @@ public class Parser {
     }
 
     public static void printTree(Node root) {
-        printInOrder(root, 0, 4);
+        printInOrder(root, 0, 8);
         POutput += "\n";
     }
 
@@ -286,12 +292,17 @@ public class Parser {
                 }
                 else{
                     nodeList.add(node);
+                    if (j == tokenList.size() - 1 && (right_braket != left_braket)){
+                        POutput += "Syntax Error3 : 括号不匹配\n";
+                    }
                     parser.printTree(node);
                 }
             }
             tlist.clear();
             POutput = POutput + "";
             j = -1;
+            left_braket = 0;
+            right_braket = 0;
         }
 
         lexerList.clear();

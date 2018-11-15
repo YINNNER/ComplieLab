@@ -14,9 +14,9 @@ public class Answer {
     static List<Node> nodeList = new ArrayList<>();
 
 
-    private static double calc(Node node) {
-        double val = -2222222;
-        double val1, val2;
+    private static float calc(Node node) {
+        float val = -2222222;
+        float val1, val2;
 
         if (null == node) {
             AOutput += "<Error>calc: syntax error.\n";
@@ -26,10 +26,10 @@ public class Answer {
         switch (node.getToken().getSymIndex()) {
             /*数字属性节点直接返回值*/
             case 0:
-                val = Double.valueOf(node.getToken().getToken());
+                val = Float.valueOf(node.getToken().getToken());
                 break;
             case 1:
-                val = Double.valueOf(node.getToken().getToken());
+                val = Float.valueOf(node.getToken().getToken());
                 break;
 
 		/*操作符属性节点值需要先计算两个操作数的值，
@@ -72,14 +72,14 @@ public class Answer {
         for (Node node: nodeList) {
             AOutput =  AOutput +  "第" + (++i) + "行算数式分析结果：" +  "\n";
             if (node == null){
-                AOutput =  AOutput + "算数式为空" +  "\n";
+                AOutput =  AOutput + "Syntax Error!" +  "\n";
             }
             else if (node.getNtIndex() == 3){
                 AOutput = AOutput + "Syntax error" +  "\n";
             }
             else {
-                double ans = calc(node);
-                int a = (new Double(ans)).intValue();
+                float ans = calc(node);
+                int a = (new Float(ans)).intValue();
                 if(a == ans){
                     AOutput += a + "\n";
                 }

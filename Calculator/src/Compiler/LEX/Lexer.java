@@ -191,7 +191,6 @@ public class Lexer {
         if (isErr){
             tokenList = new ArrayList<>();
             tokenList.add(new Token(Symbol.ERROR.ordinal(),null));
-            return;
         }
 
         lexerList.add(tokenList);
