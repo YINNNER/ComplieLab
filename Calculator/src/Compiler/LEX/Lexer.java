@@ -15,7 +15,7 @@ public class Lexer {
     int index = 0;
     String current = null;
     public static String LOutput = "";
-    Boolean isErr = false;
+    public static boolean isErr = false;
 
     private void inputFile(BufferedReader br){
         String tempString = null;
@@ -201,15 +201,25 @@ public class Lexer {
         Lexer lexer = new Lexer();
         lexer.inputFile(br);
         LOutput = "";
+        isErr = false;
         LOutput = LOutput + "----词法分析----\n";
         LOutput = LOutput + "打印格式：(种别码, Token)\n";
 
         for (int i=0; i<lexer.strings.size(); i++){
             LOutput = LOutput + "第" + (i+1) + "个字符串分析结果：\n";
             lexer.current = lexer.strings.get(i);
-            lexer.scanner();
-            lexer.printTokenInfo();
-            lexer.tokenList = new ArrayList<>();  // 清空tokenList中的Token
+            if(lexer.strings.get(i).length() == 0){
+                LOutput += "Lexical Error: 本行为空\n";
+                isErr = true;
+                lexer.tokenList.add(new Token(Symbol.ERROR.ordinal(),null));
+                lexerList.add(lexer.tokenList);
+                lexer.tokenList = new ArrayList<>();  // 清空tokenList中的Token
+            }
+            else {
+                lexer.scanner();
+                lexer.printTokenInfo();
+                lexer.tokenList = new ArrayList<>();  // 清空tokenList中的Token
+            }
             LOutput = LOutput +"";
         }
         return lexerList;

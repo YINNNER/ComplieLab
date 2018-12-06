@@ -61,13 +61,26 @@ public class Answer {
         return val;
     }
 
+    public static void postOrder(Node node){
+        if(node == null){
+           // AOutput += "<Error>: syntax error.\n";
+            return;
+        }
+        else{
+            postOrder(node.getChildNode1());
+            postOrder(node.getChildNode2());
+            AOutput += node.getToken().getToken() + " ";
+        }
+
+    }
+
     public static void AStart(BufferedReader br){
         nodeList = null;
         nodeList = Parser.PStart(br);
 
         int i = 0;
         AOutput = "";
-        AOutput = AOutput + "----语义结果----\n";
+        AOutput = AOutput + "-----结果-----\n";
 
         for (Node node: nodeList) {
             AOutput =  AOutput +  "第" + (++i) + "行算数式分析结果：" +  "\n";
@@ -78,13 +91,16 @@ public class Answer {
                 AOutput = AOutput + "Syntax error" +  "\n";
             }
             else {
+                AOutput += "后缀表达式是: ";
+                postOrder(node);
+                AOutput += "\n";
                 float ans = calc(node);
                 int a = (new Float(ans)).intValue();
                 if(a == ans){
-                    AOutput += a + "\n";
+                    AOutput += "计算结果 : " + a + "\n";
                 }
                 else {
-                    AOutput += ans + "\n";
+                    AOutput += "计算结果 : " + ans + "\n";
                 }
             }
 

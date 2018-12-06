@@ -2,9 +2,6 @@ package Compiler.PAR;
 import Compiler.LEX.Lexer;
 import Compiler.LEX.Symbol;
 import Compiler.LEX.Token;
-import com.sun.xml.internal.ws.api.message.ExceptionHasMessage;
-
-import javax.swing.*;
 import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +48,19 @@ public class Parser {
                     if(j < tokenList.size() - 1){
                         currToken = tokenList.get(++j);
                     }
+                } else if(currToken.getSymIndex() == 6 && j < tokenList.size()-1){
+                    if(tokenList.get(j+1).getSymIndex()==0||tokenList.get(j+1).getSymIndex()==1){
+                        POutput += "Syntax Error : position ("+ (j+1) +")  左括号前后都为数字不可进行运算 \n";
+                        node = new Node(null, NodeType.ERROR.ordinal());
+                        currToken = new Token(Symbol.ERROR.ordinal(),"");
+                        return node;
+                    }
+                    else {
+                        POutput += "Syntax Error : position ("+ (j+1) +")  左括号位置错误 \n";
+                        currToken = tokenList.get(++j);
+                    }
+                } else if(currToken.getSymIndex() == 6 && j == tokenList.size()-1){
+                    POutput += "Syntax Error : position ("+ (j+1) +")  左括号位置错误 \n";
                 }
             }catch(Exception e){
                 e.printStackTrace();
@@ -63,25 +73,81 @@ public class Parser {
             currToken = tokenList.get(++j);
             left_braket++;
             isOpr = false;
-            node = exp();
-            if (j == tokenList.size() - 1 && currToken.getSymIndex() != 7) {
-
-            } else if(j < tokenList.size() - 1 && currToken.getSymIndex() == 7) {
-                currToken = tokenList.get(++j);
+            if (currToken.getSymIndex() == 7){
+                POutput += "Syntax Error：position ("+ (j+1) +") 括号内为空！\n";
+                Token token = new Token(0,"0");
+                node = new Node(token,2);
                 right_braket++;
-            } else if (j == tokenList.size() - 1 && currToken.getSymIndex() == 7) {
-                right_braket++;
+                if (j == tokenList.size() - 1) {
+                } else if(j < tokenList.size() - 1 && currToken.getSymIndex() == 7) {
+                    currToken = tokenList.get(++j);
+                }
+            }else if ((currToken.getSymIndex() == 2 || currToken.getSymIndex() == 3) &&
+                    j < tokenList.size()-1 &&
+                    tokenList.get(j+1).getSymIndex() == 7){
+                POutput += "Syntax Error : position ("+ (j+1) +")  运算符号前无被运算数 \n";
+                node = new Node(null, NodeType.ERROR.ordinal());
+                currToken = new Token(Symbol.ERROR.ordinal(),"");
+                return node;
+            } else if (currToken.getSymIndex() == 4 || currToken.getSymIndex() == 5){
+                POutput += "Syntax Error : position ("+ (j+1) +")  运算符号前无被运算数 \n";
+                node = new Node(null, NodeType.ERROR.ordinal());
+                currToken = new Token(Symbol.ERROR.ordinal(),"");
+                return node;
             }
-        } else if(j == tokenList.size() - 1 && currToken.getSymIndex() == 7){
+            else {
+                node = exp();
+                if (j == tokenList.size() - 1 && currToken.getSymIndex() != 7) {
+
+                } else if(j < tokenList.size() - 1 && currToken.getSymIndex() == 7) {
+                    if (j < tokenList.size() - 1 && (tokenList.get(j+1).getSymIndex() == 0 || tokenList.get(j+1).getSymIndex() == 1)){
+                        POutput += "Syntax Error : position ("+ (j+1) +")  右括号后不可直接运算 \n";
+                        node = new Node(null, NodeType.ERROR.ordinal());
+                        currToken = new Token(Symbol.ERROR.ordinal(),"");
+                        return node;
+                    }else {
+                        currToken = tokenList.get(++j);
+                        right_braket++;
+                    }
+                } else if (j == tokenList.size() - 1 && currToken.getSymIndex() == 7) {
+                    right_braket++;
+
+                }
+
+            }
+        } else if (tokenList.size() == 1 && j == 0 && currToken.getSymIndex() == 6) {
+            POutput += "Syntax Error : position (\"+ (j+1) +\") 算数式中仅有左括号\n";
+            node = new Node(null, NodeType.ERROR.ordinal());
+            currToken = new Token(Symbol.ERROR.ordinal(),"");
+            return node;
+        } else if (tokenList.size() == 1 && j == 0 && currToken.getSymIndex() == 7) {
+            POutput += "Syntax Error : position (\"+ (j+1) +\") 算数式中仅有右括号\n";
+            node = new Node(null, NodeType.ERROR.ordinal());
+            currToken = new Token(Symbol.ERROR.ordinal(),"");
+            return node;
+        } else if (tokenList.size() > 1 && j == 0 && currToken.getSymIndex() == 7) {
+            POutput += "Syntax Error : position ("+ (j+1) +")  右括号位置错误 \n";
+            currToken = tokenList.get(++j);
+            if (currToken.getSymIndex() == 0 || currToken.getSymIndex() == 1 || currToken.getSymIndex() == 6){
+                node = factor();
+            }
+            else if (currToken.getSymIndex() == 2 || currToken.getSymIndex() == 3){
+                node = exp();
+            }else if (currToken.getSymIndex() == 4 || currToken.getSymIndex() == 5){
+                POutput += "Syntax Error : position ("+ (j+1) +")  运算符号前无被运算数 \n";
+                node = new Node(null, NodeType.ERROR.ordinal());
+                currToken = new Token(Symbol.ERROR.ordinal(),"");
+                return node;
+            }
+            else{
+                POutput += "Syntax Error : 运算违法！\n";
+                node = new Node(null, NodeType.ERROR.ordinal());
+                currToken = new Token(Symbol.ERROR.ordinal(),"");
+                return node;
+            }
+        } else if (j == tokenList.size() - 1 && currToken.getSymIndex() == 7) {
             right_braket++;
         }
-
-       /* if ((right_braket == left_braket) && j < tokenList.size() - 1 &&currToken.getSymIndex() == 7){
-            currToken = tokenList.get(++j);
-            POutput += "Something wrong.\n";
-        }else if ((right_braket == left_braket) &&j == tokenList.size() - 1 && currToken.getSymIndex() == 7){
-            POutput += "Something wrong.\n";
-        }*/
 
         return node;
     }
@@ -93,12 +159,14 @@ public class Parser {
 
         if(node !=null && node.getNtIndex() == 3){
             node = new Node(null, NodeType.ERROR.ordinal());
+            currToken = new Token(Symbol.ERROR.ordinal(),"");
             return node;
         }
 
         if (((currToken.getSymIndex() == 4) || (currToken.getSymIndex() == 5)) && j == 0){
             POutput += "Syntax error: 运算符前无被运算数"+"\n";
             node = new Node(null, NodeType.ERROR.ordinal());
+            currToken = new Token(Symbol.ERROR.ordinal(),"");
             return node;
         }else{
             node = factor();
@@ -107,14 +175,16 @@ public class Parser {
         while (((currToken.getSymIndex() == 4) || (currToken.getSymIndex() == 5)) && j <= tokenList.size() - 1) {
 
             if(isOpr){
-                POutput += "Syntax error2: 符号重叠"+"\n";
+                POutput += "Syntax Error : position ("+ (j+1) +") 符号重叠"+"\n";
                 node = new Node(null, NodeType.ERROR.ordinal());
+                currToken = new Token(Symbol.ERROR.ordinal(),"");
                 return node;
             }
 
             if(j == tokenList.size() - 1){
-                POutput += "Syntax error: 运算符后无运算数"+"\n";
+                POutput += "Syntax Error : position ("+ (j+1) +") 运算符后无运算数"+"\n";
                 node = new Node(null, NodeType.ERROR.ordinal());
+                currToken = new Token(Symbol.ERROR.ordinal(),"");
                 break;
             }
 
@@ -135,15 +205,26 @@ public class Parser {
                 if (node.getToken().getSymIndex() == 5 &&
                         (currToken.getSymIndex() == 0 || currToken.getSymIndex() == 1 ) &&
                         ((Double.valueOf(currToken.getToken())+2.0) == 2.0)){
-                    POutput += "Syntax error: \"0\"不可作为除数"+"\n";
+                    POutput += "Syntax Error : position ("+ (j+1) +") \"0\"不可作为除数"+"\n";
                     node = new Node(null, NodeType.ERROR.ordinal());
+                    currToken = new Token(Symbol.ERROR.ordinal(),"");
+                    return node;
+                }
+
+                if (j == tokenList.size()-1
+                        &&( tokenList.get(j).getSymIndex() == 6 || tokenList.get(j).getSymIndex() == 7)){
+                    POutput += "Syntax Error: position (" + (j+1) + ") 括号不可单独作为运算数.\n";
+                    node = new Node(null,NodeType.ERROR.ordinal());
+                    currToken = new Token(Symbol.ERROR.ordinal(),"");
                     return node;
                 }
 
                 if(currToken.getSymIndex() == 7){
-                    POutput += "括号不匹配.\n";
+                    POutput += "Syntax Error: position (" + (j+1) + ") 运算符后不可直接使用右括号.\n";
+                   // POutput += "括号不匹配.\n";
                     currToken = tokenList.get(++j);
                 }
+
 
                 isOpr = true;
                 rnode = term();
@@ -151,6 +232,7 @@ public class Parser {
 
                 if(rnode !=null && rnode.getNtIndex() == 3){
                     rnode = new Node(null, NodeType.ERROR.ordinal());
+                    currToken = new Token(Symbol.ERROR.ordinal(),"");
                     return rnode;
                 }
                 node.setChildNode2(rnode);
@@ -167,35 +249,47 @@ public class Parser {
 
         if(node !=null && node.getNtIndex() == 3){
             node = new Node(null, NodeType.ERROR.ordinal());
+            currToken = new Token(Symbol.ERROR.ordinal(),"");
             return node;
         }
 
         if (((currToken.getSymIndex() == 2) || (currToken.getSymIndex() == 3))
-                && (j == 0 || node.getToken().getSymIndex() == 6)){
+                && (j == 0 || tokenList.get(j-1).getSymIndex() == 6 ||
+                tokenList.get(j-1).getSymIndex() == 7)){
+            if (tokenList.size() == 1){
+                POutput += "Syntax Error : position ("+ (j+1) +") 运算符后无运算数\n";
+                node = new Node(null, NodeType.ERROR.ordinal());
+                currToken = new Token(Symbol.ERROR.ordinal(),"");
+                return node;
+            }
             Token token = new Token(0,"0");
             node = new Node(token,2);
-            isOpr = true;
+           // isOpr = true;
         }
         else{
             node = term();
         }
 
         if (((currToken.getSymIndex() == 2) || (currToken.getSymIndex() == 3)) && j == tokenList.size() - 1){
+            POutput += "Syntax Error : position ("+ (j+1) +") 运算符后无运算数\n";
             node = new Node(null, NodeType.ERROR.ordinal());
+            currToken = new Token(Symbol.ERROR.ordinal(),"");
             return node;
         }
 
 
         while (((currToken.getSymIndex() == 2) || (currToken.getSymIndex() == 3)) && j <= tokenList.size() - 1) {
             if(j == tokenList.size() - 1){
-                POutput += "Syntax error: 运算符后无运算数"+"\n";
+                POutput += "Syntax Error : position ("+ (j+1) +") 运算符后无运算数"+"\n";
                 node = new Node(null, NodeType.ERROR.ordinal());
+                currToken = new Token(Symbol.ERROR.ordinal(),"");
                 return node;
             }
 
             if(isOpr){
-                POutput += "Syntax error: 符号重叠"+"\n";
+                POutput += "Syntax Error : position ("+ (j+1) +") 符号重叠"+"\n";
                 node = new Node(null,NodeType.ERROR.ordinal());
+                currToken = new Token(Symbol.ERROR.ordinal(),"");
                 return node;
             }
             else{
@@ -213,16 +307,26 @@ public class Parser {
                 node.setToken(currToken);
                 currToken = tokenList.get(++j);
 
+                if (j == tokenList.size()-1
+                        &&( tokenList.get(j).getSymIndex() == 6 || tokenList.get(j).getSymIndex() == 7)){
+                    POutput += "Syntax Error: position (" + (j+1) + ") 括号不可单独作为运算数.\n";
+                    node = new Node(null,NodeType.ERROR.ordinal());
+                    currToken = new Token(Symbol.ERROR.ordinal(),"");
+                    return node;
+                }
+
                 if(tokenList.get(j).getSymIndex() == 7){
-                    POutput += "括号不匹配1.\n";
+                    POutput += "Syntax Error: position (" + (j+1) + ") 运算符后不可直接使用右括号.\n";
                     currToken = tokenList.get(++j);
                 }
 
                 rnode = term();
 
 
+
                 if(rnode !=null && rnode.getNtIndex() == 3){
                     rnode = new Node(null, NodeType.ERROR.ordinal());
+                    currToken = new Token(Symbol.ERROR.ordinal(),"");
                     return rnode;
                 }
                 node.setChildNode2(rnode);
@@ -233,7 +337,7 @@ public class Parser {
     }
 
     public static void printTree(Node root) {
-        printInOrder(root, 0, 8);
+        printInOrder(root, 0, 18);
         POutput += "\n";
     }
 
@@ -243,7 +347,8 @@ public class Parser {
         }
 
         printInOrder(node.childNode1, height + 1,  len);
-        String val = node.getToken().getToken();
+        //String val = node.getToken().getToken();
+        String val = node.toString();
         POutput += getSpace(height * len) + val + "\n";
         printInOrder(node.childNode2, height + 1,  len);
     }
@@ -264,6 +369,7 @@ public class Parser {
         lexerList = Lexer.LStart(br);
         Node node;
         List<Node> nodeList = new ArrayList<>();
+        nodeList.clear();
 
         POutput = "";
 
@@ -293,12 +399,12 @@ public class Parser {
                 else{
                     nodeList.add(node);
                     if (j == tokenList.size() - 1 && (right_braket != left_braket)){
-                        POutput += "Syntax Error3 : 括号不匹配\n";
+                        POutput += "Syntax Error : position ("+ (j+1) +") 右括号缺失\n";
                     }
                     parser.printTree(node);
                 }
             }
-            tlist.clear();
+
             POutput = POutput + "";
             j = -1;
             left_braket = 0;

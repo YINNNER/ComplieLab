@@ -1,11 +1,11 @@
 package UI;
 
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-import java.io.IOException;
+        import javafx.application.Application;
+        import javafx.fxml.FXMLLoader;
+        import javafx.scene.Parent;
+        import javafx.scene.Scene;
+        import javafx.stage.Stage;
+        import java.io.IOException;
 
 public class start extends Application{
     public static void main(String[] args) {
@@ -16,7 +16,7 @@ public class start extends Application{
     public void start(Stage primaryStage) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("Input.fxml"));
         primaryStage.setTitle("Calculator");
-        primaryStage.setScene(new Scene(root, 524, 348));
+        primaryStage.setScene(new Scene(root, 710, 348));
         primaryStage.show();
     }
 

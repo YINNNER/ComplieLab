@@ -14,6 +14,7 @@ public class Node {
         this.token = token;
         this.ntIndex = ntIndex;
     }
+    String[] typename={"Exp","Term","Factor","Error"};
 
     public void setToken(Token token){
         this.token = token;
@@ -48,6 +49,6 @@ public class Node {
 
     @Override
     public String toString() {
-        return "(" +token.toString() + "," + ntIndex + ")";
+        return   "( " +token.getToken() + " , " + typename[ntIndex] + " )";
     }
 }
