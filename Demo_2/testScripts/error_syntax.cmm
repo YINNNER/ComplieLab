@@ -1,0 +1,53 @@
+// 2. Syntax Error ==================================================
+
+
+// 缺少分号
+int a
+
+
+//小括号不匹配
+int b;
+ read b);
+ write (b;
+
+//数组中括号缺少
+int a[4];
+a[0=1;
+a1]=2;
+
+
+	
+
+//赋值语句语法错误
+int 3;
+double[3] r;
+String s;
+
+
+//if,while语句语法错误
+if{
+	int s;
+
+}
+
+while{
+	write("error");
+}
+
+
+//read，write语句语法错误
+read(int);
+read(7);
+write(string);
+
+//其他错误
+a++;
+if(a>true){
+	int c=1;
+}
+
+
+
+
+
+

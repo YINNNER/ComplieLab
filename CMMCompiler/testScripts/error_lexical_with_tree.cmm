@@ -9,8 +9,6 @@ int n@com;
 
 // 未知的关键字将被识别为标识符
 double c;
-rel x;
-write(a);
 
 
 
@@ -18,7 +16,6 @@ write(a);
 c=2.33.33;
 a=7a8;
 b=啊啊啊;
-d=a.a;
 
 
 // 未知的运算符

@@ -51,6 +51,8 @@ public class Interpreter {
 
     public  void Lexing(){
         lexer = new CMMLexer(new ANTLRInputStream(sourcecode));
+        lexer.removeErrorListeners();
+        lexer.addErrorListener(new CMMErrorListener(ioInterface));//注册监听器
         if(showTokens){
             List<Token> tokenList = (List<Token>) lexer.getAllTokens();
             int i = -1;
@@ -75,20 +77,22 @@ public class Interpreter {
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
         CMMParser parser = new CMMParser(tokenStream);
 
-    parser.removeErrorListeners();
-    parser.addErrorListener(new CMMErrorListener(ioInterface));//注册监听器
-    parser.setErrorHandler(new DefaultErrorStrategy());
-    parser.addParseListener(new DefPhase(ioInterface));
 
-    ParseTree parseTree = parser.program();
-    RefPhase refPhase = new RefPhase(ioInterface);
+        parser.removeErrorListeners();
+        parser.addErrorListener(new CMMErrorListener(ioInterface));//注册监听器
+        parser.setErrorHandler(new DefaultErrorStrategy());
+        parser.addParseListener(new DefPhase(ioInterface));
 
-    refPhase.visit(parseTree);
+        ParseTree parseTree = parser.program();
+        RefPhase refPhase = new RefPhase(ioInterface);
+
+        refPhase.visit(parseTree);
 
 
-    if (showTree) {
-        Trees.inspect(parseTree, parser);
-    }
+        if (showTree) {
+            Trees.inspect(parseTree, parser);
+        }
+
 
     }
 

@@ -2,12 +2,8 @@ package interpreter;
 
 import io.IOInterface;
 import org.antlr.v4.runtime.BaseErrorListener;
-import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Created by Alex on 2018.12.1
@@ -26,11 +22,12 @@ public class CMMErrorListener extends BaseErrorListener{
                             String msg,
                             RecognitionException e)
     {
-        List<String> stack = ((Parser)recognizer).getRuleInvocationStack();
-        Collections.reverse(stack);
+//        List<String> stack = ((Parser)recognizer).getRuleInvocationStack();
+//        Collections.reverse(stack);
         //io.stderr("rule stack: "+stack+"\n");
         io.stderr("\n"+"line "+line+":"+charPositionInLine+" at "+ ": "+msg+"\n");
-        System.out.print("line "+line+":"+charPositionInLine+" at "+
-                offendingSymbol+": "+msg+"\n");
+//        System.out.print("line "+line+":"+charPositionInLine+" at "+
+//                offendingSymbol+": "+msg+"\n");
     }
+
 }

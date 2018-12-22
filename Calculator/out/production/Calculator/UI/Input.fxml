@@ -9,10 +9,10 @@
 
 <AnchorPane fx:id="Pane1" prefHeight="346.0" prefWidth="707.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="UI.Input">
    <children>
-      <Button fx:id="calBtn" layoutX="41.0" layoutY="291.0" mnemonicParsing="false" onAction="#calBtnClicked" text="Calculate" />
+      <Button fx:id="calBtn" layoutX="41.0" layoutY="400" mnemonicParsing="false" onAction="#calBtnClicked" text="Calculate" />
       <Label layoutX="40.0" layoutY="34.0" text="Expression" />
-      <Button fx:id="clcBtn" layoutX="234.0" layoutY="291.0" mnemonicParsing="false" onAction="#clcBtnClicked" text="Clear" />
-      <Button fx:id="extBtn" layoutX="636.0" layoutY="291.0" mnemonicParsing="false" onAction="#extBtnClicked" text="Exit" />
+      <Button fx:id="clcBtn" layoutX="234.0" layoutY="400" mnemonicParsing="false" onAction="#clcBtnClicked" text="Clear" />
+      <Button fx:id="extBtn" layoutX="636.0" layoutY="400" mnemonicParsing="false" onAction="#extBtnClicked" text="Exit" />
       <TabPane layoutX="279.0" layoutY="24.0" prefHeight="236.0" prefWidth="398.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
           <Tab text="Lexical">
