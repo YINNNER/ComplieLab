@@ -1,0 +1,63 @@
+// 1. Lexer Error ==================================================
+
+// wrong identifiers
+write("1. 标识符命名出错：");
+write("                   ");
+int _a;
+double 3_m;
+int n@com;
+
+write("                   ");
+write("                   ");
+
+
+
+// unknown keywords will be recognized as indentifier
+write("2. 未知的关键词会被识别为标识符：");
+write("                   ");
+double c;
+rel x;
+write(a);
+write("                   ");
+write("                   ");
+
+
+
+// wrong data format
+write("3. 错误的数据格式：");
+write("                   ");
+c=2.33.33;
+a=7a8;
+b=啊啊啊;
+d=a.a;
+write("                   ");
+write("                   ");
+
+
+// unknown operator
+write("4. 未知的运算符号：");
+write("                   ");
+c=6^2;
+
+write("                   ");
+write("                   ");
+
+
+
+// comment error
+write("5. 错误的注释格式：");
+write("                   ");
+/*
+this is the multiple lines comment.
+
+write("                   ");
+write("                   ");
+
+
+
+
+
+
+
+
+

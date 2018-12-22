@@ -1,0 +1,35 @@
+// 1. Lexer Error ==================================================
+
+// wrong identifiers
+int _a;
+double 3_m;
+int n@com;
+
+
+
+
+// unknown keywords will be recognized as indentifier
+double c;
+rel x;
+write(a);
+
+
+
+
+// wrong data format
+c=2.33.33;
+a=7a8;
+b=啊啊啊;
+d=a.a;
+
+
+
+// unknown operator
+c=6^2;
+
+
+
+
+// comment error
+/*this is the multiple lines comment.
+*/

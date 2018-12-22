@@ -1,0 +1,71 @@
+write("语义错误1:赋值类型不匹配");
+int a;
+a=3.0;
+a="s";
+a=true;
+a=9;
+write(a);
+
+double b;
+b="s";
+b=9.8;
+b=false;
+b=3;
+write(b);
+
+bool c;
+c="3";
+c=3;
+c=3.0;
+c=true;
+write(c);
+
+string s;
+s=3;
+s=7.0;
+s=true;
+s="sss";
+write(s);
+
+int i[2];
+i[0]=3.0;
+i[1]=3;
+i[2]=false;
+
+double d[3];
+d[0]=3.0;
+d[1]=3;
+d[2]=false;
+
+write("                       ");
+write("                       ");
+write("语义错误2：数组下标越界  ");
+// array index error
+int r[3];
+r[4]=1;
+r[-1]=2;
+
+write("                       ");
+write("                       ");
+write("语义错误3：变量未声明/赋值");
+int i;
+k=1;
+write(i);
+
+
+write("                       ");
+write("                       ");
+write("语义错误4: 变量名重复 ");
+int ii;
+double ii;
+ii=9;
+write(ii);
+
+
+write("                       ");
+write("                       ");
+write("语义错误5: 计算式除数为0 ");
+int i;
+i=2/0;
+write(i);
+
