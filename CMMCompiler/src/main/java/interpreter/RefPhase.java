@@ -225,7 +225,7 @@ public class RefPhase extends CMMBaseVisitor<ReturnValue> {
                     if(0 <= varIndex && varIndex < varArray.length){
                         if(rightValue.getValue(Type.tInt) != null)
                         {
-                            if(!(rightValue.getType()==Type.tDouble)){
+                            if(!(rightValue.getType()==Type.tInt)){
                                 Error.unmatched_type_error(io,token);
                             }else{
                                 varArray[varIndex] = (Integer) rightValue.getValue(Type.tInt);
