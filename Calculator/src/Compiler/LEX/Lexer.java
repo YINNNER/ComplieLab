@@ -220,6 +220,7 @@ public class Lexer {
                 lexer.printTokenInfo();
                 lexer.tokenList = new ArrayList<>();  // 清空tokenList中的Token
             }
+            isErr = false;
             LOutput = LOutput +"";
         }
         return lexerList;
