@@ -1,9 +1,8 @@
-#diy
-ComplieLab1.1/
+# DIY
+!CMMCompiler/src/main/java/gen/
 
 
-
-#java-------
+# java-------
 # Compiled class file
 *.class
 
@@ -28,11 +27,10 @@ ComplieLab1.1/
 hs_err_pid*
 
 
-#idea------
+# idea------
 .idea/
 *.iml
 out/
-gen/
 idea-gitignore.jar
 resources/templates.list
 resources/gitignore/*

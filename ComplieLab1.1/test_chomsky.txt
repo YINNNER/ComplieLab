@@ -1,0 +1,70 @@
+3
+G[A]
+A B S
+A::=xB|y
+S::=aA
+B::=Ab
+
+2
+G[S]
+S N M
+S::=aN|xSa
+S::=bM
+N::=aM
+M::=bM|y
+
+1
+G[N]
+N A
+N::=Aaab
+Aa::=bA
+Ab::=cc
+
+
+0
+G[S]
+S A B
+S::=Aa|b
+aAb::=ppp|bbb
+pB::=a
+
+
+error
+G[N]
+S A
+S::=Aa|b
+aAb::=ppp|bbb
+c::=a
+
+
+
+2ex
+G[N]
+N D
+N::=xD|y
+D::=#|z|xNy
+
+
+3ex
+G[N]
+N R S
+N::=xR|y|z
+R::=#|0|1|2|3|4
+S::=#|yR|zR
+
+
+error
+G[S]
+A B C
+
+
+error
+G[S]
+S A B 
+A::=xA|y|z
+B::=0|1|2|3|4
+C::=yB|zB
+
+
+
+
